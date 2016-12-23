@@ -14,4 +14,4 @@ This will find the host of today's daily standup meeting.
 
 3. Find your host!
 
-  `./meeting_host.rb`
+  run `./meeting_host.rb`
