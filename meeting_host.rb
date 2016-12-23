@@ -1,8 +1,21 @@
 #!/usr/bin/env ruby
 require 'gemoji'
 
-TEAM_LEADER  = 'Roger'
-TEAM_MEMBERS = %w(Eugene Yiwen Leon Howard Tony Kellen)
+def create_team_file
+  File.open('team', 'w') do |file|
+    print 'Enter team leader name: '
+    file.write(gets.chomp.gsub(/\s+/, '') + ',')
+    print 'Enter team member names split with comma: '
+    file.write(gets.chomp.gsub(/\s+/, '') + "\n")
+    file.close
+  end
+end
+
+def import_team_members
+  members = IO.foreach('team').to_a[0].split(',')
+  @team_leader  = members.first
+  @team_members = members[1..-1]
+end
 
 def input_convert(answer)
   case answer
@@ -13,8 +26,8 @@ def input_convert(answer)
 end
 
 def find_host(leader_exist)
-  TEAM_MEMBERS << TEAM_LEADER if leader_exist
-  TEAM_MEMBERS.sample
+  @team_members << @team_leader if leader_exist
+  @team_members.sample
 end
 
 def gemoji_installed?
@@ -26,7 +39,9 @@ def find_emoji_of(name)
 end
 
 if gemoji_installed?
-  print "Is #{TEAM_LEADER} here #{find_emoji_of('thinking')}  [y/n] "
+  create_team_file unless File.file?('team')
+  import_team_members
+  print "Is #{@team_leader} here #{find_emoji_of('thinking')}  [y/n] "
   puts "Today's host is #{find_host(input_convert(gets.chomp))} #{find_emoji_of('kissing_heart')}"
 else
   puts 'Please install gemoji first.'
