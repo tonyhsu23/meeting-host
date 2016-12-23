@@ -4,7 +4,7 @@ This will find the host of today's daily standup meeting.
 
 ## Usage
 
-1. Please install `gemoji` first.
+1. Please install `gemoji` first. [Recommended]
 
   `gem install gemoji`
 

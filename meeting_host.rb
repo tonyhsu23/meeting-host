@@ -4,6 +4,16 @@ def gemoji_installed?
   filter_string(`gem list gemoji -i`) == 'true'
 end
 
+def setup_gemoji
+  if @emoji
+    require 'gemoji'
+    @think_emoji = find_emoji_of('thinking').concat('  ')
+    @kiss_emoji  = find_emoji_of('kissing_heart').prepend(' ')
+  else
+    @think_emoji, @kiss_emoji = nil
+  end
+end
+
 def find_emoji_of(name)
   Emoji.find_by_alias(name).raw
 end
@@ -42,22 +52,26 @@ def find_host(leader_exist)
 end
 
 def main_action
-  require 'gemoji'
+  setup_gemoji
   create_team_file unless File.file?('team')
   import_team_members
-  print "Is #{@team_leader} here #{find_emoji_of('thinking')}  [y/n] "
-  puts "Today's host is #{find_host(input_convert(gets.chomp))} #{find_emoji_of('kissing_heart')}"
+  print "Is #{@team_leader} here #{@think_emoji}[y/n] "
+  puts "Today's host is #{find_host(input_convert(gets.chomp))}#{@kiss_emoji}"
 end
 
 if gemoji_installed?
+  @emoji = true
   main_action
 else
   print "Cannot find gemoji, do you want to install now? [y/n] "
   if input_convert(gets.chomp)
     puts `gem install gemoji`
     puts "\n"
+    @emoji = true
     main_action
   else
-    puts "That's fine, you can install it later."
+    @emoji = false
+    puts "That's fine, you don't know how fun it is!"
+    main_action
   end
 end
